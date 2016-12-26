@@ -1,12 +1,17 @@
+clear
+
+OUT_PATH_NAME='test';
 
 target = 'Set5';
-dataDir = fullfile('TEST_DATA_DIR', target);
+dataDir = fullfile('.', target);
 count = 0;
 f_lst = dir(fullfile(dataDir, '*.bmp'));
-folder = fullfile('test', target);
-mkdir(folder);
+folder = fullfile(OUT_PATH_NAME, target);
+
+if ~exist(folder, 'dir') mkdir(folder); end
+
 for f_iter = 1:numel(f_lst)
-%     disp(f_iter);
+    disp(f_iter);
     f_info = f_lst(f_iter);
     if f_info.name == '.'
         continue;
@@ -35,7 +40,7 @@ for f_iter = 1:numel(f_lst)
     img_3 = imresize(imresize(img_raw,1/3,'bicubic'),[img_size(1),img_size(2)],'bicubic');
     img_4 = imresize(imresize(img_raw,1/4,'bicubic'),[img_size(1),img_size(2)],'bicubic');
     
-    patch_name = sprintf('%s/%d',folder,count);
+    patch_name = sprintf('%s/%d', folder, count);
     
     save(patch_name, 'img_raw');
     save(sprintf('%s_2', patch_name), 'img_2');
