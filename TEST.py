@@ -8,13 +8,17 @@ import scipy.io
 import pickle
 from MODEL import model
 from MODEL_FACTORIZED import model_factorized
+
+
 DATA_PATH = "./data/test/"
+OUT_PATH = 'psnr'
 
 import argparse
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_path")
 args = parser.parse_args()
 model_path = args.model_path
+
 def get_img_list(data_path):
     l = glob.glob(os.path.join(data_path,"*"))
     l = [f for f in l if re.search("^\d+.mat$", os.path.basename(f))]
@@ -43,6 +47,7 @@ def get_test_image(test_list, offset, batch_size):
         gt_list.append(gt_img)
         scale_list.append(pair[2])
     return input_list, gt_list, scale_list
+
 def test_VDSR_with_sess(epoch, ckpt_path, data_path,sess):
     folder_list = glob.glob(os.path.join(data_path, 'Set*'))
     print 'folder_list', folder_list
@@ -65,16 +70,21 @@ def test_VDSR_with_sess(epoch, ckpt_path, data_path,sess):
             print "PSNR: bicubic %f\tVDSR %f" % (psnr_bicub, psnr_vdsr)
             psnr_list.append([psnr_bicub, psnr_vdsr, scale_list[0]])
         psnr_dict[os.path.basename(folder_path)] = psnr_list
-    with open('psnr/%s' % os.path.basename(ckpt_path), 'wb') as f:
+    with open('%s/%s' % (OUT_PATH, os.path.basename(ckpt_path)), 'wb') as f:
         pickle.dump(psnr_dict, f)
+
 def test_VDSR(epoch, ckpt_path, data_path):
     with tf.Session() as sess:
         test_VDSR_with_sess(epoch, ckpt_path, data_path, sess)
+
 if __name__ == '__main__':
+    if not os.path.exists(OUT_PATH):
+        os.makedirs(OUT_PATH)
+
     model_list = sorted(glob.glob("./checkpoints/VDSR_norm_0.01_epoch_*"))
     model_list = [fn for fn in model_list if not os.path.basename(fn).endswith("meta")]
     with tf.Session() as sess:
-        input_tensor            = tf.placeholder(tf.float32, shape=(1, None, None, 1))
+        input_tensor = tf.placeholder(tf.float32, shape=(1, None, None, 1))
         shared_model = tf.make_template('shared_model', model)
         output_tensor, weights  = shared_model(input_tensor)
         #output_tensor, weights     = model_factorized(input_tensor)
@@ -85,4 +95,4 @@ if __name__ == '__main__':
             #if epoch<60:
             #   continue
             print "Testing model",model_ckpt
-            test_VDSR_with_sess(80, model_ckpt, DATA_PATH,sess)
+            test_VDSR_with_sess(80, model_ckpt, DATA_PATH, sess)

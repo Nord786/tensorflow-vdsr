@@ -1,2 +1,2 @@
-model_checkpoint_path: "VDSR_norm_0.01_epoch_017.ckpt-121104"
-all_model_checkpoint_paths: "VDSR_norm_0.01_epoch_017.ckpt-121104"
+model_checkpoint_path: "VDSR_norm_0.01_epoch_023.ckpt-161472"
+all_model_checkpoint_paths: "VDSR_norm_0.01_epoch_023.ckpt-161472"
