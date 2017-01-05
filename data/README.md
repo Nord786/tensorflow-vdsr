@@ -1,7 +1,5 @@
 # data generation
 0. Download train/test data from [original author's project page](http://cv.snu.ac.kr/research/VDSR/)
-  0.1 Url for train set - http://cv.snu.ac.kr/research/VDSR/train_data.zip
-  0.2 Url for test set - http://cv.snu.ac.kr/research/VDSR/test_data.zip
 1. Download and unzip 291 dataset, and set the proper directory in 'aug_train.m'.
 2. Download and unzip other test dataset (Set5, Set14, B100, Urban100), and set the proper directory in 'aug_test.m'.
 3. run 'aug_train.m' and 'aug_test.m' matlab code for patch/data generation

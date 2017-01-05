@@ -19,6 +19,11 @@ MAX_EPOCH = 120
 
 USE_QUEUE_LOADING = True
 
+import logging
+
+FORMAT = '%(asctime)-15s %(message)s'
+logging.basicConfig(format=FORMAT, level=logging.INFO)
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument("--model_path")
@@ -230,7 +235,9 @@ if __name__ == '__main__':
 
                 for step in range(len(train_list)//BATCH_SIZE):
                     _,l,output,lr, g_step = sess.run([opt, loss, train_output, learning_rate, global_step])
-                    print "[epoch %2.4f] loss %.4f\t lr %.5f"%(epoch+(float(step)*BATCH_SIZE/len(train_list)), np.sum(l)/BATCH_SIZE, lr)
+                    if step % 100 == 0:
+                        real_epoch = epoch + float(step) * BATCH_SIZE / len(train_list)
+                        logging.info("[epoch %2.4f] loss %.4f\t lr %.5f" % ( real_epoch, np.sum(l)/BATCH_SIZE, lr))
                     #print "[epoch %2.4f] loss %.4f\t lr %.5f\t norm %.2f"%(epoch+(float(step)*BATCH_SIZE/len(train_list)), np.sum(l)/BATCH_SIZE, lr, norm)
                 saver.save(sess, "./checkpoints/VDSR_norm_0.01_epoch_%03d.ckpt" % epoch ,global_step=global_step)
                 if epoch%20==19:
